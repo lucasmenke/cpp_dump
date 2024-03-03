@@ -79,6 +79,8 @@ int main()
         sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
         if (sockfd == -1)
         {
+            // prints out errno -> errno is a global integer that holds the error
+            // automatically translates errno error code into error msg
             perror("server: socket");
             exit(1);
         }
