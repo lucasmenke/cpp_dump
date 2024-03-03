@@ -26,6 +26,7 @@ int main()
         // prints out errno -> errno is a global integer that holds the error
         // automatically translates errno error code into error msg
         perror("socket");
+        exit(1);
     }
 
     // attempts to connect to a remote host using the socket file descriptor, ip address & it's size
@@ -33,6 +34,7 @@ int main()
     if (connect_status == -1)
     {
         perror("connect");
+        exit(1);
     }
 
     return 0;

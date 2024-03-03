@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     if (status != 0)
     {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
-        exit(2);
+        exit(1);
     }
 
     printf("IP addresses for %s:\n\n", argv[1]);
