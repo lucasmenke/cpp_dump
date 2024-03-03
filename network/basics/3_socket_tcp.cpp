@@ -8,33 +8,35 @@
 // bla = bind, listen, accept
 int main()
 {
-    addrinfo *res, hints = {};
+    addrinfo *servinfo, hints = {};  // servinfo -> server info
     hints.ai_family = AF_UNSPEC;     // IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM; // TCP
     hints.ai_flags = AI_PASSIVE;     // fill in my own IP
 
-    int gai_status = getaddrinfo(NULL, "3490", &hints, &res);
+    int gai_status = getaddrinfo(NULL, "3490", &hints, &servinfo);
     if (gai_status != 0)
     {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gai_status));
+        return 1;
     }
 
     // socket file descriptor
     // socket returns a socket file descriptor which can be used to make stuff with the socket
-    int sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    int sockfd = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
     if (sockfd == -1)
     {
-        // errno is a global variable that holds the error value
-        fprintf(stderr, "bind error: %s\n", strerror(errno));
+        perror("socket");
+        return 1;
     }
 
     // 1. BIND
     // binds the socket to our own ip on port 3490
     // all ports under 1024 are reserved for the system unless you are super user (su)
-    int bind_status = bind(sockfd, res->ai_addr, res->ai_addrlen);
+    int bind_status = bind(sockfd, servinfo->ai_addr, servinfo->ai_addrlen);
     if (bind_status == -1)
     {
-        fprintf(stderr, "bind error: %s\n", strerror(errno));
+        perror("bind");
+        return 1;
     }
 
     // 2. LISTEN
@@ -43,7 +45,8 @@ int main()
     int listen_status = listen(sockfd, 5);
     if (listen_status == -1)
     {
-        fprintf(stderr, "listen: %s\n", strerror(errno));
+        perror("listen");
+        return 1;
     }
 
     // 3. ACCEPT
@@ -55,7 +58,8 @@ int main()
     int newfd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size);
     if (newfd == -1)
     {
-        fprintf(stderr, "accept: %s\n", strerror(errno));
+        perror("accept");
+        return 1;
     }
 
     // 4. SEND / RECIVE
@@ -65,7 +69,8 @@ int main()
     int bytes_sent = send(newfd, msg.c_str(), msg.length(), 0);
     if (bytes_sent == -1)
     {
-        fprintf(stderr, "send: %s\n", strerror(errno));
+        perror("send");
+        return 1;
     }
 
     char buffer[1024];
@@ -73,11 +78,13 @@ int main()
     int bytes_rec = recv(newfd, buffer, 1024, 0);
     if (bytes_rec == -1)
     {
-        fprintf(stderr, "recv: %s\n", strerror(errno));
+        perror("recive");
+        return 1;
     }
     else if (bytes_rec == 0)
     {
         printf("remote side closed the connection");
+        return 0;
     }
 
     // 5. CLOSE / SHUTDOWN
@@ -89,13 +96,15 @@ int main()
     int shutddown_status = shutdown(newfd, 2);
     if (shutddown_status == -1)
     {
-        fprintf(stderr, "shutdown: %s\n", strerror(errno));
+        perror("shutdown");
+        return 1;
     }
 
     int close_status = close(newfd);
     if (close_status == -1)
     {
-        fprintf(stderr, "shutdown: %s\n", strerror(errno));
+        perror("close");
+        return 1;
     }
 
     return 0;
