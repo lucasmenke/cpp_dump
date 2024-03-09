@@ -162,9 +162,10 @@ int main()
         }
 
         // ntop: network to presentation
-        inet_ntop(their_addr.ss_family,
-                  get_in_addr((struct sockaddr *)&their_addr),
-                  s, sizeof s);
+        //      - get_in_addr(): extracts the address (in binary) from the sockaddr struct
+        //      - inet_ntop(): converts this binary address into a human-readable string
+        //      - s: resulting string is stored in the character array s
+        inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof s);
         printf("server: got connection from %s\n", s);
 
         // this ensures that the code is running as a child process

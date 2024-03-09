@@ -32,7 +32,5 @@
 *.app
 *.elf
 
-# Linux executables
-*
-!*.*
-!*/
+# Binaries
+bin/

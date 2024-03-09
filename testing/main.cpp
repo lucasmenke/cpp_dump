@@ -3,28 +3,22 @@
 class Base
 {
 public:
-    virtual void Whisper() const { std::cout << "Base class whisper\n"; }
+    void StartBase() const { std::cout << "Start Base"; }
 };
 
-class Derived : public Base
+class Aggregator
 {
 public:
-    void Whisper() const { std::cout << "Derived class whisper\n"; }
+    void StartDerived() const { base.StartBase(); }
+
+private:
+    Base base;
 };
 
-void PtrFunction(Base *pObj);
-void RefFunction(Base &rObj);
-void ValueFunction(Base obj);
 int main()
 {
-    Base *pDerived = new Derived;
-    PtrFunction(pDerived);
-    RefFunction(*pDerived);
-    ValueFunction(*pDerived);
+    Aggregator mAggregator;
+    mAggregator.StartDerived();
 
     return 0;
 }
-
-void PtrFunction(Base *pObj) { pObj->Whisper(); }
-void RefFunction(Base &rObj) { rObj.Whisper(); }
-void ValueFunction(Base obj) { obj.Whisper(); }
