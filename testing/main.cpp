@@ -1,24 +1,54 @@
-#include <iostream>
+#include <string>
 
-class Base
+enum COLOR
 {
-public:
-    void StartBase() const { std::cout << "Start Base"; }
+    Brown,
+    Grey,
+    Black
 };
 
-class Aggregator
+class Horse
 {
 public:
-    void StartDerived() const { base.StartBase(); }
+    Horse(COLOR color, int height) : color(color), height(height)
+    {
+        printf("Horse constructor\n");
+    }
+    void HorseFacts() const { printf("Color: %d, Height: %d\n", color, height); }
 
 private:
-    Base base;
+    COLOR color;
+    int height;
+};
+
+class Bird
+{
+public:
+    Bird(COLOR color, int age) : color(color), age(age)
+    {
+        printf("Bird constructor\n");
+    }
+    void BirdFacts() const { printf("Color: %d, Age: %d\n", color, age); }
+
+private:
+    COLOR color;
+    int age;
+};
+
+class Pegasus : public Horse, public Bird
+{
+public:
+    Pegasus(COLOR color, int height, int age) : Horse(color, height), Bird(color, age)
+    {
+        printf("Pegasus constructor\n");
+    }
 };
 
 int main()
 {
-    Aggregator mAggregator;
-    mAggregator.StartDerived();
+    Pegasus mPegasus(Brown, 100, 2);
+    mPegasus.HorseFacts();
+    mPegasus.BirdFacts();
 
     return 0;
 }
